@@ -12,18 +12,27 @@ app.use(express.json()); // Cho phep server doc JSON tu request body
 const orderRoutes = require('./routes/orderRoutes'); 
 app.use('/api/orders', orderRoutes);
 
-// Ket noi MongoDB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('✅ MongoDB Connected!'))
-    .catch(err => console.error('❌ Connection error:', err));
-
-    // Route kiem tra server
+// Route kiem tra server
 app.get('/', (req, res) => {
     res.send('API Quan ly Don hang dang hoat dong...');
 });
 
-// Khoi chay server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-});
+
+async function startServer() {
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            serverSelectionTimeoutMS: 5000
+        });
+        console.log('✅ MongoDB Connected!');
+
+        app.listen(PORT, () => {
+            console.log(`🚀 Server is running on port ${PORT}`);
+        });
+    } catch (err) {
+        console.error('❌ MongoDB connection failed:', err.message);
+        process.exitCode = 1;
+    }
+}
+
+startServer();
