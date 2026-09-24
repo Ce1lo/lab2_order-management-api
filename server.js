@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const morgan = require('morgan');
 require('dotenv').config();
 
 const app = express();
@@ -8,13 +9,17 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json()); // Cho phep server doc JSON tu request body
+app.use(morgan('dev')); // In log request len terminal truc quan
 
 const orderRoutes = require('./routes/orderRoutes'); 
 app.use('/api/orders', orderRoutes);
 
 // Route kiem tra server
 app.get('/', (req, res) => {
-    res.send('API Quan ly Don hang dang hoat dong...');
+    res.json({
+        success: true,
+        message: 'API Quan ly Don hang dang hoat dong...'
+    });
 });
 
 const PORT = process.env.PORT || 5000;
